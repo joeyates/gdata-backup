@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+
+require 'pp'
+
+$: << File.expand_path( '../lib', File.dirname( __FILE__ ) )
+
+require 'gdata/download'
+
+def usage
+  puts <<EOT
+Usage:
+  $ #{__FILE__} email@gmail.com password destination_directory
+EOT
+end
+
+if ARGV.size < 2
+  usage
+  exit
+end
+
+@user, @password, @path = ARGV
+
+download = Gdata::Download.new( @user, @password, { :path => @path } )
+pp download.documents
+
