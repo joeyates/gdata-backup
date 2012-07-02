@@ -14,7 +14,7 @@ module Gdata
     def download
       raise ':path missing from options' unless @options[ :path ]
       raise ":path option indicates a non-existent directory: '#{ @options[ :path ] }'" unless File.directory?( @options[ :path ] ) 
-      @documents.each do | document |
+      documents.each do | document |
         response = spreadsheet_client.get( document[ :url ] )
         File.open( @options[ :path ] + '/' + document[ :file_name ], 'wb' ) do | file |
           file.write response.body
