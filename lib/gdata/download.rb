@@ -1,7 +1,6 @@
 require 'gdata/client'
 require 'gdata/http'
 require 'gdata/auth'
-require 'pp'
 
 module Gdata
 

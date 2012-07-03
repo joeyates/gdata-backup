@@ -1,7 +1,5 @@
 #!/usr/bin/env ruby
 
-require 'pp'
-
 $: << File.expand_path( '../lib', File.dirname( __FILE__ ) )
 
 require 'gdata/download'
