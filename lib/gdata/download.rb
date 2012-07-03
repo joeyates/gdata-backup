@@ -1,6 +1,7 @@
 require 'gdata/client'
 require 'gdata/http'
 require 'gdata/auth'
+require 'logger'
 
 module Gdata
 
@@ -8,12 +9,15 @@ module Gdata
 
     def initialize( user, password, options = {} )
       @user, @password, @options = user, password, options.clone
+      @log       = Logger.new( STDOUT )
+      @log.level = Logger::INFO
     end
 
     def download
       raise ':path missing from options' unless @options[ :path ]
       raise ":path option indicates a non-existent directory: '#{ @options[ :path ] }'" unless File.directory?( @options[ :path ] ) 
       documents.each do | document |
+        @log.info document[ :file_name ]
         response = spreadsheet_client.get( document[ :url ] )
         File.open( @options[ :path ] + '/' + document[ :file_name ], 'wb' ) do | file |
           file.write response.body
@@ -33,7 +37,7 @@ module Gdata
         title  = entry.elements[ 'title' ].text
         format = download_format( src, title )
         if format == ''
-          #puts "Skipping '#{title}' (#{src})"
+          @log.info "Skipping '#{title}'"
           next
         end
         url         = src + '&exportFormat=' + format
