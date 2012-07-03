@@ -10,8 +10,8 @@ Alternatives
 There are various other applications available which download Google Docs:
 
 * You can download a zipped bundle from the Google Docs web interface,
-* There are various commercial products,
-* There are some Open Source
+* There are some Open Source,
+* There are various commercial products.
 
 Open Source:
 
@@ -25,15 +25,4 @@ Commercial:
 * http://www.workflow.ae/Google-Docs-Backup-Utility/
 * http://www.gladinet.com/
 * http://www.syncdocs.com/
-
-GMail:
-
-* http://www.thegmailbackup.com/
-
-To do
-=====
-
-* switch to GData::Client::DocList for downloads
-* download PDFs, etc
-
 
