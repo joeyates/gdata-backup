@@ -18,7 +18,12 @@ module Gdata
       raise ":path option indicates a non-existent directory: '#{ @options[ :path ] }'" unless File.directory?( @options[ :path ] ) 
       documents.each do | document |
         @log.info document[ :file_name ]
-        response = spreadsheet_client.get( document[ :url ] )
+        begin
+          response = spreadsheet_client.get( document[ :url ] )
+        rescue => e
+          @log.error "Download of #{ document[ :file_name ] } failed: #{ e }"
+          next
+        end
         File.open( @options[ :path ] + '/' + document[ :file_name ], 'wb' ) do | file |
           file.write response.body
         end
