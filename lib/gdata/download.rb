@@ -7,9 +7,11 @@ module Gdata
 
   class Download
 
-    def initialize( user, password, options = {} )
-      @user, @password, @options = user, password, options.clone
-      @log       = Logger.new( STDOUT )
+    def initialize(account_username)
+      @config    = Gdata::Config.new.data
+      @account   = @config[:accounts].find { |a| a[:username] == account_username }
+      raise 'account unknown' if @account.nil?
+      @log       = Logger.new(STDOUT)
       @log.level = Logger::INFO
     end
 
@@ -33,7 +35,7 @@ module Gdata
     def documents
       return @documents if @documents
 
-      doc = doc_list_client.get( 'https://docs.google.com/feeds/documents/private/full' )
+      doc = doc_list_client.get('https://docs.google.com/feeds/documents/private/full')
       list = doc.to_xml
 
       @documents = []
@@ -60,14 +62,14 @@ module Gdata
     def doc_list_client
       return @doc_list_client if @doc_list_client
       @doc_list_client = GData::Client::DocList.new
-      @doc_list_client.clientlogin( @user, @password )
+      @doc_list_client.clientlogin(@account[:username], @account[:password])
       @doc_list_client
     end
 
     def spreadsheet_client
       return @spreadsheet_client if @spreadsheet_client
       @spreadsheet_client = GData::Client::Spreadsheets.new
-      @spreadsheet_client.clientlogin( @user, @password )
+      @spreadsheet_client.clientlogin(@account[:username], @account[:password])
       @spreadsheet_client
     end
 
