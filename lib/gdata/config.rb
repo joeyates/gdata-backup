@@ -1,13 +1,15 @@
 # encoding: utf-8
-require 'highline'
+require 'imap/backup'
 
 module Gdata
   class Config
 
-      class << self
-        attr_accessor :highline
-      end
-      self.highline = HighLine.new
+    attr_reader :data
+
+    def initialize
+      store = Imap::Backup::Configuration::Store.new(true)
+      @data = store.data
+    end
 
   end
 end
