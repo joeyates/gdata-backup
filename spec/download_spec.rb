@@ -1,7 +1,6 @@
 $: << '../lib'
 
 require 'gdata/download'
-require 'gdata/config'
 require "rexml/document"
 
 describe Gdata::Download do
@@ -25,22 +24,22 @@ EOT
 
   context '#initialize' do
     before :each do
-      @config = stub('Gdata::Config')
-      Gdata::Config.stub!(:new).and_return(@config)
+      @config = stub('Imap::Backup::Configuration::Store')
+      Imap::Backup::Configuration::Store.stub!(:new).and_return(@config)
       @data = {:accounts => [{:username => 'account_username'}]}
       @config.stub!(:data).and_return(@data)
     end
 
     it 'should load config' do
-      Gdata::Config.              should_receive(:new).and_return(@config)
-      @config.                    should_receive(:data).and_return(@data)
+      Imap::Backup::Configuration::Store.should_receive(:new).and_return(@config)
+      @config.should_receive(:data).and_return(@data)
 
-      Gdata::Download.new('account_username')
+      Gdata::Download.new('account_username', '/a/path')
     end
 
     it 'should fail if the account is not configured' do
       expect do
-        Gdata::Download.new('unknwon_username')
+        Gdata::Download.new('unknown_username', '/a/path')
       end.to raise_error(/unknown/)
     end
 
@@ -50,8 +49,8 @@ EOT
 
     before :each do
       @data = {:accounts => [{:username => 'jdoe@example.com', :password => 'secret'}]}
-      @config = stub('Gdata::Config', :data => @data)
-      Gdata::Config.stub!(:new).and_return(@config)
+      @config = stub('Imap::Backup::Configuration::Store', :data => @data)
+      Imap::Backup::Configuration::Store.stub!(:new).and_return(@config)
       @doc_list_client = stub('GData::Client::DocList')
       @doc_list_client.stub!(:clientlogin => true)
       GData::Client::DocList.stub!(:new => @doc_list_client)
@@ -60,7 +59,7 @@ EOT
                        and_return(canned_doc_list_response)
     end
 
-    subject { Gdata::Download.new('jdoe@example.com') }
+    subject { Gdata::Download.new('jdoe@example.com', '/a/path') }
 
     it 'should log in' do
       @doc_list_client.           should_receive(:clientlogin).

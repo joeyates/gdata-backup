@@ -7,7 +7,7 @@ require 'gdata/download'
 def usage
   puts <<EOT
 Usage:
-  $ #{__FILE__} email@gmail.com password destination_directory
+  $ #{__FILE__} email@gmail.com destination_directory
 EOT
 end
 
@@ -16,8 +16,8 @@ if ARGV.size < 2
   exit
 end
 
-@user, @password, @path = ARGV
+@user, @path = ARGV
 
-download = Gdata::Download.new( @user, @password, { :path => @path } )
+download = Gdata::Download.new(@user, @path)
 download.download
 

@@ -3,12 +3,16 @@ require 'gdata/http'
 require 'gdata/auth'
 require 'logger'
 
+require 'imap/backup'
+
 module Gdata
 
   class Download
 
-    def initialize(account_username)
-      @config    = Gdata::Config.new.data
+    def initialize(account_username, path)
+      @path      = path
+      store      = Imap::Backup::Configuration::Store.new(true)
+      @config    = store.data
       @account   = @config[:accounts].find { |a| a[:username] == account_username }
       raise 'account unknown' if @account.nil?
       @log       = Logger.new(STDOUT)
@@ -16,17 +20,16 @@ module Gdata
     end
 
     def download
-      raise ':path missing from options' unless @options[ :path ]
-      raise ":path option indicates a non-existent directory: '#{ @options[ :path ] }'" unless File.directory?( @options[ :path ] ) 
-      documents.each do | document |
-        @log.info document[ :file_name ]
+      raise "The supplied path '#{@path}' does not exist" unless File.directory?(@path) 
+      documents.each do |document|
+        @log.info document[:file_name]
         begin
-          response = spreadsheet_client.get( document[ :url ] )
+          response = spreadsheet_client.get(document[:url])
         rescue => e
-          @log.error "Download of #{ document[ :file_name ] } failed: #{ e }"
+          @log.error "Download of #{document[:file_name]} failed: #{e}"
           next
         end
-        File.open( @options[ :path ] + '/' + document[ :file_name ], 'wb' ) do | file |
+        File.open(File.join(@path, document[:file_name]), 'wb' ) do |file|
           file.write response.body
         end
       end
