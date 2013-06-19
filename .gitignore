@@ -1,6 +1,6 @@
+/bin/stubs
 .bundle
 Gemfile.lock
 .rbenv-version
 .rvmrc
-vendor/
 
