@@ -1,8 +1,11 @@
-source :rubygems
+source 'https://rubygems.org'
 
 gem 'gdata'
 gem 'imap-backup'
-gem 'pry'
-gem 'pry-doc'
-gem 'rspec'
+
+group :development do
+  gem 'pry'
+  gem 'pry-doc'
+  gem 'rspec'
+end
 
