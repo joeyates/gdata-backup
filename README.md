@@ -4,6 +4,20 @@ Make a local copy of Google Docs via the command line.
 
 This program makes it easy to download your Google Docs for backup, e.g. via a cron job.
 
+Installation
+============
+
+```
+bundle
+```
+
+Usage
+=====
+
+```
+gdata-backup EMAIL DIRECTORY
+```
+
 Alternatives
 ============
 
