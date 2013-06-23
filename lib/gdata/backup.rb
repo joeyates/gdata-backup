@@ -6,9 +6,7 @@ require 'logger'
 require 'imap/backup'
 
 module Gdata
-
-  class Download
-
+  class Backup
     def initialize(account_username, path)
       @path      = path
       store      = Imap::Backup::Configuration::Store.new
@@ -19,7 +17,7 @@ module Gdata
       @log.level = Logger::INFO
     end
 
-    def download
+    def run
       raise "The supplied path '#{@path}' does not exist" unless File.directory?(@path) 
       documents.each do |document|
         @log.info document[:file_name]
@@ -34,6 +32,8 @@ module Gdata
         end
       end
     end
+
+    private
 
     def documents
       return @documents if @documents
@@ -59,8 +59,6 @@ module Gdata
 
       @documents
     end
-
-    private
 
     def doc_list_client
       return @doc_list_client if @doc_list_client

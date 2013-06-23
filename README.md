@@ -11,6 +11,17 @@ Installation
 bundle
 ```
 
+Configuration
+=============
+This gem uses the imap-backup gem's command line inetrface to configure the GMail
+accounts that you want to back up. imap-backup is installed when you run bundle (above).
+
+```shell
+$ imap-backup setup
+```
+
+See the imap-backup README for fuller instructions.
+
 Usage
 =====
 

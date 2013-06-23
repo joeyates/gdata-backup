@@ -3,7 +3,7 @@
 root = File.expand_path('../..', __FILE__)
 $: << File.join(root, 'lib')
 
-require 'gdata/download'
+require 'gdata/backup'
 
 def usage
   puts <<EOT
@@ -19,6 +19,5 @@ end
 
 @user, @path = ARGV
 
-download = Gdata::Download.new(@user, @path)
-download.download
+Gdata::Backup.new(@user, @path).run
 

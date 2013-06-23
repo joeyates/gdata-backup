@@ -1,6 +1,5 @@
 /bin/stubs
-.bundle
-Gemfile.lock
-.rbenv-version
-.rvmrc
+/.bundle
+/Gemfile.lock
+/pkg/
 
