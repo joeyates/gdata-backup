@@ -8,7 +8,7 @@ Installation
 ============
 
 ```
-bundle
+gem install gdata-backup
 ```
 
 Configuration
