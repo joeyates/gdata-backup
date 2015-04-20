@@ -1,9 +1,9 @@
 $: << '../lib'
 
-require 'gdata/download'
+require 'gdata/backup'
 require "rexml/document"
 
-describe Gdata::Download do
+describe Gdata::Backup do
   
   def canned_doc_list_response
     s = <<EOT
@@ -26,30 +26,24 @@ EOT
     before :each do
       @config = stub('Imap::Backup::Configuration::Store')
       Imap::Backup::Configuration::Store.stub!(:new).and_return(@config)
-      @data = {:accounts => [{:username => 'account_username'}]}
-      @config.stub!(:data).and_return(@data)
-    end
-
-    it 'should load config' do
-      Imap::Backup::Configuration::Store.should_receive(:new).and_return(@config)
-      @config.should_receive(:data).and_return(@data)
-
-      Gdata::Download.new('account_username', '/a/path')
+      @accounts = [{:username => 'account_username'}]
+      @config.stub!(:accounts).and_return(@accounts)
     end
 
     it 'should fail if the account is not configured' do
       expect do
-        Gdata::Download.new('unknown_username', '/a/path')
+        described_class.new('unknown_username', '/a/path')
       end.to raise_error(/unknown/)
     end
 
   end
 
-  context '#documents' do
+  context '#run' do
+    let(:path) { "/a/path" }
 
     before :each do
-      @data = {:accounts => [{:username => 'jdoe@example.com', :password => 'secret'}]}
-      @config = stub('Imap::Backup::Configuration::Store', :data => @data)
+      @accounts = [{:username => 'jdoe@example.com', :password => 'secret'}]
+      @config = stub('Imap::Backup::Configuration::Store', :accounts => @accounts)
       Imap::Backup::Configuration::Store.stub!(:new).and_return(@config)
       @doc_list_client = stub('GData::Client::DocList')
       @doc_list_client.stub!(:clientlogin => true)
@@ -57,34 +51,26 @@ EOT
       @doc_list_client.stub!(:get).
                        with('https://docs.google.com/feeds/documents/private/full').
                        and_return(canned_doc_list_response)
+      allow(File).to receive(:directory?).and_call_original
+      allow(File).to receive(:directory?).with(path) { true }
     end
 
-    subject { Gdata::Download.new('jdoe@example.com', '/a/path') }
+    subject { described_class.new('jdoe@example.com', path) }
 
     it 'should log in' do
       @doc_list_client.           should_receive(:clientlogin).
                                   with('jdoe@example.com', 'secret').
                                   and_return(true)
 
-      subject.documents
+      subject.run
     end
 
     it 'should list documents' do
       @doc_list_client.           should_receive(:get).
                                   and_return(canned_doc_list_response)
 
-      subject.documents
+      subject.run
     end
-
-    it 'should return document information' do
-      documents = subject.documents
-
-      documents.                  should == [{:file_name => 'Doc1.odt',
-                                              :url       => 'https://docs.google.com/feeds/download/documents/export/Export?id=XXXXXXXX&exportFormat=odt'},
-                                             {:file_name => 'Doc2.odt',
-                                              :url       => 'https://docs.google.com/feeds/download/documents/export/Export?id=YYYYYYYY&exportFormat=odt'}]
-    end
-
   end
 
 end
