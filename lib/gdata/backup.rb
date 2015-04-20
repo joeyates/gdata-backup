@@ -10,8 +10,7 @@ module Gdata
     def initialize(account_username, path)
       @path      = path
       store      = Imap::Backup::Configuration::Store.new
-      @config    = store.data
-      @account   = @config[:accounts].find { |a| a[:username] == account_username }
+      @account   = store.accounts.find { |a| a[:username] == account_username }
       raise 'account unknown' if @account.nil?
       @log       = Logger.new(STDOUT)
       @log.level = Logger::INFO
